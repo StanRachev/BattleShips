@@ -2,44 +2,31 @@ import java.util.Scanner;
 
 public class Player {
 
-    public void makeGuess() {
+    public int[] makeGuess() {
 
-        String state = "Hit";
+        Scanner scan = new Scanner(System.in);
+        char userInputLetter = 'm';
+        int userInputRow = 0;
+        int userInputColumn = 0;
 
-        while (state == "Hit") {
-
-            Scanner scan = new Scanner(System.in);
-            String userInput;
-            char userInputLetter;
-            int userInputLetterInt = 0;
-            int userInputNumber = 0;
-
-            System.out.println();
-            System.out.print("Please enter a letter: ");
-            userInput = scan.nextLine(); // Get a String for position from the user and convert it to row and column
-            userInputLetter = userInput.charAt(0);
-
-            switch (Character.toUpperCase(userInputLetter)) {
-                case 'A' -> userInputLetterInt = 0;
-                case 'B' -> userInputLetterInt = 1;
-                case 'C' -> userInputLetterInt = 2;
-                case 'D' -> userInputLetterInt = 3;
-                case 'E' -> userInputLetterInt = 4;
-                case 'F' -> userInputLetterInt = 5;
-                case 'G' -> userInputLetterInt = 6;
-                case 'H' -> userInputLetterInt = 7;
-                case 'I' -> userInputLetterInt = 8;
-                case 'J' -> userInputLetterInt = 9;
-                default -> throw new IllegalArgumentException("Letters from A to J only");
+        System.out.println();
+        boolean isLetter = false;
+        while (!isLetter) {
+            System.out.print("Please enter a letter from A to J: ");
+            userInputLetter = scan.next().charAt(0);
+            if ((userInputLetter >= 'a' && userInputLetter <= 'j') || (userInputLetter >= 'A' && userInputLetter <= 'J')) {
+                isLetter = true;
             }
-
-            System.out.print("Please enter a number: ");
-            userInputNumber = scan.nextInt();
-            userInputNumber -= 1;
-
-            Ships ship = new Ships();
-            state = ship.createShips(userInputLetterInt, userInputNumber);
         }
+        userInputRow = Character.toUpperCase(userInputLetter) - 65; // Convert the userInput letter to number from 0 to 9;
+        System.out.print("Please enter a number: ");
+        userInputColumn = scan.nextInt();
+        userInputColumn -= 1; // subtract -1 from the userInput
 
+        int[] userInput = new int[2];
+        userInput[0] = userInputRow;
+        userInput[1] = userInputColumn;
+
+        return userInput;
     }
 }

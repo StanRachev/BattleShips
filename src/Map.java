@@ -1,4 +1,4 @@
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Map {
@@ -9,14 +9,14 @@ public class Map {
         INVALID
     };
     private final int MAP_SIZE = 10;
-    private final char[][] map = new char[MAP_SIZE][MAP_SIZE];
+    private Cell[][] mapCells = new Cell[MAP_SIZE][MAP_SIZE];
 
     public void createMap() {
 
         int i, j = 0;
         for (i = 0; i < MAP_SIZE; i++) {
             for (j = 0; j < MAP_SIZE; j++) {
-                map[i][j] = '~';
+                mapCells[i][j] = new Cell(null, i, j);
             }
         }
     }
@@ -28,44 +28,52 @@ public class Map {
         int i = 0;
         int j = 0;
 
+        System.out.println();
         System.out.print("  ");
         for (i = 0; i < MAP_SIZE; i++) {
             System.out.print(column++ + "  ");
         }
         System.out.println();
         for (i = 0; i < MAP_SIZE; i++) {
+            if (i > 0) {
+                System.out.println();
+            }
             System.out.print(row++ + " "); // print from A to J
-            System.out.println(Arrays.toString(map[i]));
+            for (j = 0; j < mapCells.length; j++) {
+                if (j < 9) {
+                    System.out.print(mapCells[i][j].getCellVisual() + "  ");
+                } else {
+                    System.out.print(mapCells[i][j].getCellVisual());
+                }
+            }
         }
     }
 
-    public List<char[]> createShips() {
+    public List<Ship> createShips() {
 
-        char[][] ship = new char[10][10];
+        List<Ship> newShip = new ArrayList<>();
 
-        ship[1][7] = 'V';
-        ship[2][1] = 'V';
-        ship[2][3] = 'V'; ship[2][4] = 'V'; ship[2][5] = 'V';
-        ship[3][8] = 'V'; ship[4][8] = 'V';
-        ship[5][0] = 'V'; ship[5][1] = 'V';
-        ship[5][5] = 'V';
-        ship[5][3] = 'V'; ship[6][3] = 'V'; ship[7][3] = 'V';
-        ship[7][8] = 'V';
-        ship[9][3] = 'V';
-        ship[9][5] = 'V'; ship[9][6] = 'V'; ship[9][7] = 'V'; ship[9][8] = 'V';
+        newShip.add(new Ship (true, 3, 2, 3));
+        newShip.add(new Ship (false, 2, 4, 8));
+        newShip.add(new Ship (true, 4, 5, 3));
+        newShip.add(new Ship (false, 3, 7, 1));
 
-        return List.of(ship);
+        return newShip;
     }
 
-    public void addShip(List<char[]> shipsList) {
+    public void populateMap(List<Ship> ships) {
 
-        char[][] shipsArray = shipsList.toArray(new char[MAP_SIZE][MAP_SIZE]);
-
-        int i, j = 0;
-        for (i = 0; i < MAP_SIZE; i++) {
-            for (j = 0; j < MAP_SIZE; j++) {
-                if (shipsArray[i][j] == 'V') {
-                    map[i][j] = shipsArray[i][j];
+        for (Ship ship : ships) {
+            int row = ship.getRow() - 1;
+            int column = ship.getColumn() - 1;
+            //reduce number of condition checks to 2 ( now it is 4 )
+            if (ship.getSize() > 1 && ship.isHorizontal()) {
+                for (int i = 0; i < ship.getSize(); i++) {
+                    mapCells[row][column++].setBattleship(ship);
+                }
+            } else if (ship.getSize() > 1 && !ship.isHorizontal()) {
+                for (int i = 0; i < ship.getSize(); i++) {
+                    mapCells[row++][column].setBattleship(ship);
                 }
             }
         }
@@ -73,19 +81,25 @@ public class Map {
 
     public cellState_t hit(int row, int column) {
 
-        String condition = "Hit";
-
-        if (map[row][column] == 'V') {
+        String condition = "Hit!";
+        List<Ship> myShips = createShips();
+        //the only free spot to hit is "" why not just check if its == ?
+        if (mapCells[row][column].getCellVisual() == '*' || mapCells[row][column].getCellVisual() == 'X') {
+        //if (mapCells[row][column].getCellVisual() != '~' ) {
+            System.out.println("You already shot there, try again");
+        } else if (mapCells[row][column].getBattleship() != null) {
+            System.out.println();
             System.out.println(condition);
-            map[row][column] = 'X';
             return cellState_t.HIT;
         } else {
             condition = "Miss!";
+            System.out.println();
             System.out.println(condition);
-            map[row][column] = '*';
             return cellState_t.MISS;
         }
 
-//        return cellState_t.INVALID;
+        return cellState_t.INVALID;
     }
+
+    
 }

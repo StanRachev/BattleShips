@@ -14,7 +14,6 @@ public class Player {
 
         boolean isLetter = false;
         while (!isLetter) {
-            System.out.println();
             System.out.print("Please enter a letter from A to J: ");
             userInputLetter = scanLetter.next().charAt(0);
             if ((userInputLetter >= 'a' && userInputLetter <= 'j') || (userInputLetter >= 'A' && userInputLetter <= 'J')) {
@@ -36,7 +35,7 @@ public class Player {
                 isNumber = true;
             }
         }
-        userInputColumn -= 1; // subtract -1 from the userInput
+        userInputColumn -= 1;
 
         int[] userInput = new int[2];
         userInput[0] = userInputRow;

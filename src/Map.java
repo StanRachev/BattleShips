@@ -13,7 +13,8 @@ public class Map {
 
     public void createMap() {
 
-        int i, j = 0;
+        int i, j;
+
         for (i = 0; i < MAP_SIZE; i++) {
             for (j = 0; j < MAP_SIZE; j++) {
                 mapCells[i][j] = new Cell(null, i, j);
@@ -25,28 +26,24 @@ public class Map {
 
         int column = 1;
         char row = 'A';
-        int i = 0;
-        int j = 0;
+        int i, j;
 
         System.out.println();
         System.out.print("  ");
         for (i = 0; i < MAP_SIZE; i++) {
-            System.out.print(column++ + "  ");
+            System.out.print(column++ + "  "); // print numbers
         }
         System.out.println();
         for (i = 0; i < MAP_SIZE; i++) {
             if (i > 0) {
-                System.out.println();
+                System.out.println(); // new line for every new row
             }
             System.out.print(row++ + " "); // print from A to J
             for (j = 0; j < mapCells.length; j++) {
-                if (j < 9) {
-                    System.out.print(mapCells[i][j].getCellVisual() + "  ");
-                } else {
-                    System.out.print(mapCells[i][j].getCellVisual());
-                }
+                System.out.print(mapCells[i][j].getCellVisual() + "  "); // print water '~' for every cell
             }
         }
+        System.out.println();
     }
 
     public List<Ship> createShips() {
@@ -55,10 +52,10 @@ public class Map {
 
         newShip.add(new Ship (true, 3, 2, 3));
         newShip.add(new Ship (false, 2, 4, 8));
-        newShip.add(new Ship (true, 4, 5, 3));
-        newShip.add(new Ship (false, 3, 7, 1));
+//        newShip.add(new Ship (true, 4, 5, 3));
+//        newShip.add(new Ship (false, 3, 7, 1));
 
-        return newShip;
+        return newShip; // return list of ships
     }
 
     public void populateMap(List<Ship> ships) {
@@ -66,14 +63,16 @@ public class Map {
         for (Ship ship : ships) {
             int row = ship.getRow() - 1;
             int column = ship.getColumn() - 1;
-            //reduce number of condition checks to 2 ( now it is 4 )
-            if (ship.getSize() > 1 && ship.isHorizontal()) {
-                for (int i = 0; i < ship.getSize(); i++) {
-                    mapCells[row][column++].setBattleship(ship);
-                }
-            } else if (ship.getSize() > 1 && !ship.isHorizontal()) {
-                for (int i = 0; i < ship.getSize(); i++) {
-                    mapCells[row++][column].setBattleship(ship);
+
+            if (ship.getSize() > 1) {
+                if (ship.isHorizontal()) {
+                    for (int i = 0; i < ship.getSize(); i++) {
+                        mapCells[row][column++].setBattleship(ship);
+                    }
+                } else {
+                    for (int i = 0; i < ship.getSize(); i++) {
+                        mapCells[row++][column].setBattleship(ship);
+                    }
                 }
             }
         }
@@ -82,24 +81,69 @@ public class Map {
     public cellState_t hit(int row, int column) {
 
         String condition = "Hit!";
-        List<Ship> myShips = createShips();
-        //the only free spot to hit is "" why not just check if its == ?
-        if (mapCells[row][column].getCellVisual() == '*' || mapCells[row][column].getCellVisual() == 'X') {
-        //if (mapCells[row][column].getCellVisual() != '~' ) {
-            System.out.println("You already shot there, try again");
-        } else if (mapCells[row][column].getBattleship() != null) {
+        Cell cellHit = mapCells[row][column];
+        if (cellHit.getHit()) {
             System.out.println();
-            System.out.println(condition);
+            System.out.println("You already shot here");
+        } else if (cellHit.getBattleship() != null) {
+            cellHit.isHit();
+            cellHit.getBattleship().reduceHealth(); // Take 1 health
+
+            if (cellHit.getBattleship().getHealth() != 0) { // if ship is hit, but not destroyed
+                System.out.println();
+                System.out.println(condition); // Hit!
+            } else {
+                condition = "Kill!";
+                System.out.println(condition);
+                cellHit.getBattleship().setSize(0); // size of Ship is 0
+                if (cellHit.getBattleship().getHealth() == 0) {
+                    return cellState_t.KILL;
+                }
+            }
+
             return cellState_t.HIT;
         } else {
+            cellHit.isHit();
             condition = "Miss!";
             System.out.println();
             System.out.println(condition);
+
             return cellState_t.MISS;
         }
 
         return cellState_t.INVALID;
     }
 
-    
+    public boolean allDestroyed(List<Ship> myShips) {
+
+        for (Ship ship : myShips) {
+            if (!ship.isDead()) {
+                break;
+            } else {
+                System.out.println("Game over!");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void printShips(List<Ship> myShips) {
+
+        int cntr;
+
+        System.out.println();
+        for (int i = 1; i <= 4; i++) {
+            cntr = 0;
+            for (Ship myShip : myShips) {
+                if (myShip.getHealth() == 0) {
+                    myShip.setSize(0);
+                }
+                if (myShip.getSize() == i) {
+                    cntr++;
+                }
+            }
+            System.out.println("Ships of size " + i + " = " + cntr);
+        }
+    }
 }

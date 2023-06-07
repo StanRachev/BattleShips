@@ -1,6 +1,6 @@
 public class Cell {
 
-    private char cellVisual = '~';
+    private char cellVisual = '=';
     private char cellVisualHitWater = '*';
     private Ship battleship;
     private int row;
@@ -23,10 +23,10 @@ public class Cell {
             if (isHit) {
                 return this.battleship.getCellVisualDestroyed();
             }
-            return this.battleship.getCellVisualAlive();
+//            return this.battleship.getCellVisualAlive();
         }
         if (isHit) {
-            if (this.cellVisual == '~') {
+            if (this.cellVisual == '=') {
                 return this.cellVisualHitWater;
             }
         }

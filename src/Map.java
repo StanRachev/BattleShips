@@ -3,9 +3,9 @@ import java.util.List;
 
 public class Map {
     public enum cellState_t {
-        HIT,
-        KILL,
-        MISS,
+        Ship_is_hit,
+        Ship_is_destroyed,
+        You_missed,
         INVALID
     };
     private final int MAP_SIZE = 10;
@@ -33,6 +33,7 @@ public class Map {
         for (i = 0; i < MAP_SIZE; i++) {
             System.out.print(column++ + "  "); // print numbers
         }
+        System.out.print("   '=' - fog");
         System.out.println();
         for (i = 0; i < MAP_SIZE; i++) {
             if (i > 0) {
@@ -40,7 +41,11 @@ public class Map {
             }
             System.out.print(row++ + " "); // print from A to J
             for (j = 0; j < mapCells.length; j++) {
-                System.out.print(mapCells[i][j].getCellVisual() + "  "); // print water '~' for every cell
+                System.out.print(mapCells[i][j].getCellVisual() + "  "); // print fog '=' for every cell
+            }
+            switch (i) {
+                case 0 -> System.out.print("    '*' - miss");
+                case 1 -> System.out.print("    'X' - hit");
             }
         }
         System.out.println();
@@ -50,10 +55,16 @@ public class Map {
 
         List<Ship> newShip = new ArrayList<>();
 
-        newShip.add(new Ship (true, 3, 2, 3));
-        newShip.add(new Ship (false, 2, 4, 8));
-//        newShip.add(new Ship (true, 4, 5, 3));
-//        newShip.add(new Ship (false, 3, 7, 1));
+        newShip.add(new Ship (false, 1, 3, 2));
+        newShip.add(new Ship (false, 1, 2, 8));
+        newShip.add(new Ship (false, 1, 6, 6));
+        newShip.add(new Ship (false, 1, 8, 9));
+        newShip.add(new Ship (false, 1, 10, 4));
+        newShip.add(new Ship (true, 2, 6, 1));
+        newShip.add(new Ship (false, 2, 4, 9));
+        newShip.add(new Ship (true, 3, 3, 4));
+        newShip.add(new Ship (false, 3, 6, 4));
+        newShip.add(new Ship (true, 4, 10, 6));
 
         return newShip; // return list of ships
     }
@@ -64,7 +75,7 @@ public class Map {
             int row = ship.getRow() - 1;
             int column = ship.getColumn() - 1;
 
-            if (ship.getSize() > 1) {
+            if (ship.getSize() >= 1) {
                 if (ship.isHorizontal()) {
                     for (int i = 0; i < ship.getSize(); i++) {
                         mapCells[row][column++].setBattleship(ship);
@@ -80,7 +91,6 @@ public class Map {
 
     public cellState_t hit(int row, int column) {
 
-        String condition = "Hit!";
         Cell cellHit = mapCells[row][column];
         if (cellHit.getHit()) {
             System.out.println();
@@ -88,44 +98,36 @@ public class Map {
         } else if (cellHit.getBattleship() != null) {
             cellHit.isHit();
             cellHit.getBattleship().reduceHealth(); // Take 1 health
-
             if (cellHit.getBattleship().getHealth() != 0) { // if ship is hit, but not destroyed
-                System.out.println();
-                System.out.println(condition); // Hit!
+                return cellState_t.Ship_is_hit;
             } else {
-                condition = "Kill!";
-                System.out.println(condition);
                 cellHit.getBattleship().setSize(0); // size of Ship is 0
                 if (cellHit.getBattleship().getHealth() == 0) {
-                    return cellState_t.KILL;
+                    return cellState_t.Ship_is_destroyed;
                 }
             }
-
-            return cellState_t.HIT;
+            return cellState_t.Ship_is_hit;
         } else {
             cellHit.isHit();
-            condition = "Miss!";
-            System.out.println();
-            System.out.println(condition);
-
-            return cellState_t.MISS;
+            return cellState_t.You_missed;
         }
-
         return cellState_t.INVALID;
     }
 
     public boolean allDestroyed(List<Ship> myShips) {
 
+        boolean isAllDead = true;
         for (Ship ship : myShips) {
             if (!ship.isDead()) {
-                break;
-            } else {
-                System.out.println("Game over!");
-                return true;
+                isAllDead = false;
             }
         }
+        if (isAllDead) {
+            System.out.println("Game over!");
+            return isAllDead;
+        }
 
-        return false;
+        return isAllDead;
     }
 
     public void printShips(List<Ship> myShips) {

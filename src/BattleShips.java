@@ -18,14 +18,16 @@ public class BattleShips {
         while (isPlaying) {
             Map.cellState_t condition;
             int[] playerGuess = player.makeGuess(); // player makes a guess
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
             condition = map.hit(playerGuess[0], playerGuess[1]); // returns condition (Hit, Kill) and changing visual aspect on map
             if (map.allDestroyed(shipList)) { // if all ships are destroyed
                 isPlaying = false;
             }
             map.printMap();
-            if (condition == Map.cellState_t.KILL) {
-                map.printShips(shipList);
-            }
+            map.printShips(shipList);
+            System.out.println();
+            System.out.println(condition);
         }
     }
 }

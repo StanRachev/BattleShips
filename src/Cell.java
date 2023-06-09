@@ -23,7 +23,9 @@ public class Cell {
             if (isHit) {
                 return this.battleship.getCellVisualDestroyed();
             }
-//            return this.battleship.getCellVisualAlive();
+            if (!this.battleship.isAi()) {
+                return this.battleship.getCellVisualAlive();
+            }
         }
         if (isHit) {
             if (this.cellVisual == '=') {
@@ -56,4 +58,5 @@ public class Cell {
     public boolean getHit() {
         return this.isHit;
     }
+
 }

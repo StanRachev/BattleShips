@@ -1,33 +1,48 @@
-import java.util.List;
+import java.util.Scanner;
 
 public class BattleShips {
 
-    public static void main(String[] args) {
+    private static boolean isNewGame = true;
 
-        Map map = new Map();
-        map.createMap(); // create new Map
+    public static void main(String[] args) throws InterruptedException {
 
-        List<Ship> shipList = map.createShips(); // create new ships
-        map.populateMap(shipList); // assign the ships to the map
-        map.printMap();
-        map.printShips(shipList); // print types/sizes of ships
+        while (isNewGame) {
 
-        Player player = new Player();
+            GameLauncher myGame = new GameLauncher();
 
-        boolean isPlaying = true;
-        while (isPlaying) {
-            Map.cellState_t condition;
-            int[] playerGuess = player.makeGuess(); // player makes a guess
-            System.out.print("\033[H\033[2J");
-            System.out.flush();
-            condition = map.hit(playerGuess[0], playerGuess[1]); // returns condition (Hit, Kill) and changing visual aspect on map
-            if (map.allDestroyed(shipList)) { // if all ships are destroyed
-                isPlaying = false;
+            boolean isGameOver = false;
+            while (!isGameOver) {
+                myGame.launchGame();
+                isGameOver = myGame.isGameOver();
             }
-            map.printMap();
-            map.printShips(shipList);
-            System.out.println();
-            System.out.println(condition);
+            if (myGame.isWinner()) {
+                System.out.println("\nYou win!");
+            } else {
+                System.out.println("\nGame over");
+            }
+            anotherGame();
         }
+    }
+
+    public static void anotherGame() {
+
+        System.out.println("\nDo you want another game?");
+        System.out.print("Y/N: ");
+
+        char userInput = 'V';
+        boolean isRightLetter = false;
+        while (!isRightLetter) {
+            Scanner scan = new Scanner(System.in);
+            userInput = scan.next().charAt(0);
+            if (Character.toUpperCase(userInput) == 'N' || Character.toUpperCase(userInput) == 'Y') {
+                isRightLetter = true;
+            }
+        }
+
+        if (Character.toUpperCase(userInput) == 'N') {
+            isNewGame = false;
+        }
+        System.out.print("\033[H\033[2J"); /* Screen is wiped */
+        System.out.flush();
     }
 }

@@ -2,6 +2,7 @@ public class Ship {
 
     private boolean isHorizontal;
     private boolean isDead = false;
+    private boolean isAi;
     private int size;
     private int health;
     private int row;
@@ -10,7 +11,8 @@ public class Ship {
     private char cellVisualDestroyed = 'X';
 
 
-    public Ship(boolean isHorizontal, int size, int row, int column) {
+    public Ship(boolean isAi, boolean isHorizontal, int size, int row, int column) {
+        this.isAi = isAi;
         this.isHorizontal = isHorizontal;
         this.size = size;
         this.row = row;
@@ -58,5 +60,9 @@ public class Ship {
 
     public void reduceHealth() {
         health--;
+    }
+
+    public boolean isAi() {
+        return isAi;
     }
 }

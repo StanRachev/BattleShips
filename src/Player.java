@@ -10,11 +10,9 @@ public class Player {
         int userInputRow = 0;
         int userInputColumn = 0;
 
-        System.out.println();
-
         boolean isLetter = false;
         while (!isLetter) {
-            System.out.print("Please enter a letter from A to J: ");
+            System.out.print("\nPlease enter a letter from A to J: ");
             userInputLetter = scanLetter.next().charAt(0);
             if ((userInputLetter >= 'a' && userInputLetter <= 'j') || (userInputLetter >= 'A' && userInputLetter <= 'J')) {
                 isLetter = true;
@@ -42,5 +40,13 @@ public class Player {
         userInput[1] = userInputColumn;
 
         return userInput;
+    }
+
+    public String playerName() {
+
+        Scanner scan = new Scanner(System.in);
+        System.out.print("Please enter player name: ");
+
+        return scan.next();
     }
 }

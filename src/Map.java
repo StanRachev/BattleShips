@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Map {
     public enum cellState_t {
@@ -55,7 +56,129 @@ public class Map {
 
         List<Ship> newShip = new ArrayList<>();
 
-        newShip.add(new Ship (false,false, 1, 3, 2));
+        Random random = new Random();
+        int trueFalse;
+        int row = -1;
+        int column = -1;
+        int size = 2;
+        int shipRow;
+        int shipColumn;
+        int shipSize;
+
+        boolean isHorizontal;
+        boolean isNumber = false;
+        boolean isShip = false;
+        while (!isNumber) {
+
+            isHorizontal = false;
+            row = random.nextInt(10);
+            column = random.nextInt(10);
+
+            if ((newShip.size() == 5 || newShip.size() == 7 || newShip.size() == 9) && isShip) {
+                size++;
+            }
+            trueFalse = random.nextInt(11);
+            if (trueFalse % 2 == 0) {
+                isHorizontal = true;
+                if (column + (size - 1) > MAP_SIZE - 1) {
+                    column -= ((column + (size - 1)) - (MAP_SIZE - 1));
+                }
+            } else {
+                if (row + (size - 1) > MAP_SIZE - 1) {
+                    row -= ((row + (size - 1)) - (MAP_SIZE - 1));
+                }
+            }
+            isShip = true;
+            for (Ship ships : newShip) {
+                shipRow = ships.getRow();
+                shipColumn = ships.getColumn();
+                shipSize = ships.getSize();
+
+                if (size == 1 && shipSize == 1) {
+                    if (row == shipRow && column == shipColumn) {
+                        isShip = false;
+                        break;
+                    }
+                } else if (isHorizontal && (ships.isHorizontal() || shipSize == 1)) {
+                    if (row == shipRow) {
+                        for (int j = 0; j < size; j++) {
+                            if (column == shipColumn) {
+                                isShip = false;
+                                break;
+                            }
+                            column++;
+                        }
+                        if (!isShip) {
+                            break;
+                        }
+                        column -= size;
+                    }
+                } else if (!isHorizontal && (ships.isHorizontal() || shipSize == 1)) {
+                    for (int j = 0; j < size; j++) {
+                        if (row == shipRow) {
+                            for (int k = 0; k < shipSize; k++) {
+                                if (column == shipColumn) {
+                                    isShip = false;
+                                    break;
+                                }
+
+                                shipColumn++;
+                            }
+                            if (!isShip) {
+                                break;
+                            }
+                        }
+                        row++;
+                    }
+                    if (!isShip) {
+                        break;
+                    }
+                    row -= size;
+                } else if (isHorizontal && !ships.isHorizontal()) {
+                    for (int j = 0; j < shipSize; j++) {
+                        if (row == shipRow) {
+                            for (int k = 0; k < size; k++) {
+                                if (column == shipColumn) {
+                                    isShip = false;
+                                    break;
+                                }
+                                column++;
+                            }
+                            if (!isShip) {
+                                break;
+                            }
+                            column -= size;
+                        }
+                        shipRow++;
+                    }
+                    if (!isShip) {
+                        break;
+                    }
+                } else if (!isHorizontal && !ships.isHorizontal()) {
+                    if (column == ships.getColumn()) {
+                        for (int j = 0; j < size; j++) {
+                            if (row == shipColumn) {
+                                isShip = false;
+                                break;
+                            }
+                            row++;
+                        }
+                        if (!isShip) {
+                            break;
+                        }
+                        row -= size;
+                    }
+                }
+            }
+            if (isShip) {
+                newShip.add(new Ship(false, isHorizontal, size, row, column));
+            }
+            if (newShip.size() == 10) {
+                isNumber = true;
+            }
+        }
+
+/*        newShip.add(new Ship (false,false, 1, 3, 2));
         newShip.add(new Ship (false,false, 1, 2, 8));
         newShip.add(new Ship (false,false, 1, 6, 6));
         newShip.add(new Ship (false,false, 1, 8, 9));
@@ -64,7 +187,7 @@ public class Map {
         newShip.add(new Ship (false,false, 2, 4, 9));
         newShip.add(new Ship (false,true, 3, 3, 4));
         newShip.add(new Ship (false,false, 3, 6, 4));
-        newShip.add(new Ship (false,true, 4, 10, 6));
+        newShip.add(new Ship (false,true, 4, 10, 6));*/
 
         return newShip; // return list of ships
     }
@@ -72,8 +195,8 @@ public class Map {
     public void populateMap(List<Ship> ships) {
 
         for (Ship ship : ships) {
-            int row = ship.getRow() - 1;
-            int column = ship.getColumn() - 1;
+            int row = ship.getRow();
+            int column = ship.getColumn();
 
             if (ship.getSize() >= 1) {
                 if (ship.isHorizontal()) {
@@ -117,7 +240,7 @@ public class Map {
         int cntr;
 
         System.out.println();
-        for (int i = 1; i <= 4; i++) {
+        for (int i = 2; i <= 5; i++) {
             cntr = 0;
             for (Ship myShip : myShips) {
                 if (myShip.getHealth() == 0) {
@@ -177,27 +300,6 @@ class MapAI extends Map {
     public List<Ship> createShips() {
 
         List<Ship> newShipAi = new ArrayList<>();
-
-        if (isHorizontal) {
-            if (row + size < MAP_SIZE) {
-
-            }
-        } else {
-            if (column + size < MAP_SIZE) {
-
-            }
-        }
-
-        newShipAi.add(new Ship (true,false, 1, 3, 2));
-//        newShipAi.add(new Ship (true,false, 1, 2, 8));
-//        newShipAi.add(new Ship (true,false, 1, 6, 6));
-//        newShipAi.add(new Ship (true,false, 1, 8, 9));
-//        newShipAi.add(new Ship (true,false, 1, 10, 4));
-//        newShipAi.add(new Ship (true,true, 2, 6, 1));
-//        newShipAi.add(new Ship (true,false, 2, 4, 9));
-//        newShipAi.add(new Ship (true,true, 3, 3, 4));
-//        newShipAi.add(new Ship (true,false, 3, 6, 4));
-//        newShipAi.add(new Ship (true,true, 4, 10, 6));
 
         return newShipAi; // return list of ships
     }

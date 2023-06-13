@@ -24,7 +24,18 @@ public class Cell {
                 return this.battleship.getCellVisualDestroyed();
             }
             if (!this.battleship.isAi()) {
-                return this.battleship.getCellVisualAlive();
+                if (battleship.getHealth() == 2) {
+                    return this.battleship.getCellVisualVanguard();
+                }
+                if (battleship.getHealth() == 3) {
+                    return this.battleship.getCellVisualTriumpf();
+                }
+                if (battleship.getHealth() == 4) {
+                    return this.battleship.getCellVisualHercules();
+                }
+                if (battleship.getHealth() == 5) {
+                    return this.battleship.getCellVisualDreadnought();
+                }
             }
         }
         if (isHit) {

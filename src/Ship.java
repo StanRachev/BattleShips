@@ -7,8 +7,13 @@ public class Ship {
     private int health;
     private int row;
     private int column;
-    private char cellVisualAlive = 'V';
+    private int cntr = 0;
+    private char cellVisualVanguard = 'V';
+    private char cellVisualTriumpf = 'T';
+    private char cellVisualHercules = 'H';
+    private char cellVisualDreadnought = 'D';
     private char cellVisualDestroyed = 'X';
+
 
 
     public Ship(boolean isAi, boolean isHorizontal, int size, int row, int column) {
@@ -46,12 +51,24 @@ public class Ship {
         return column;
     }
 
-    public char getCellVisualAlive() {
-        return cellVisualAlive;
+    public char getCellVisualVanguard() {
+        return cellVisualVanguard;
     }
 
     public char getCellVisualDestroyed() {
         return cellVisualDestroyed;
+    }
+
+    public char getCellVisualTriumpf() {
+        return cellVisualTriumpf;
+    }
+
+    public char getCellVisualHercules() {
+        return cellVisualHercules;
+    }
+
+    public char getCellVisualDreadnought() {
+        return cellVisualDreadnought;
     }
 
     public int getHealth() {

@@ -55,29 +55,21 @@ public class Map {
     public List<Ship> createShips() {
 
         List<Ship> newShip = new ArrayList<>();
-
         Random random = new Random();
-        int trueFalse;
-        int row = -1;
-        int column = -1;
-        int size = 2;
-        int shipRow;
-        int shipColumn;
-        int shipSize;
 
-        boolean isHorizontal;
+        int size = 2;
         boolean isNumber = false;
         boolean isShip = false;
         while (!isNumber) {
 
-            isHorizontal = false;
-            row = random.nextInt(10);
-            column = random.nextInt(10);
+            boolean isHorizontal = false;
+            int row = random.nextInt(10);
+            int column = random.nextInt(10);
 
             if ((newShip.size() == 5 || newShip.size() == 7 || newShip.size() == 9) && isShip) {
                 size++;
             }
-            trueFalse = random.nextInt(11);
+            int trueFalse = random.nextInt(11);
             if (trueFalse % 2 == 0) {
                 isHorizontal = true;
                 if (column + (size - 1) > MAP_SIZE - 1) {
@@ -90,9 +82,9 @@ public class Map {
             }
             isShip = true;
             for (Ship ships : newShip) {
-                shipRow = ships.getRow();
-                shipColumn = ships.getColumn();
-                shipSize = ships.getSize();
+                int shipRow = ships.getRow();
+                int shipColumn = ships.getColumn();
+                int shipSize = ships.getSize();
 
                 if (size == 1 && shipSize == 1) {
                     if (row == shipRow && column == shipColumn) {
@@ -121,7 +113,6 @@ public class Map {
                                     isShip = false;
                                     break;
                                 }
-
                                 shipColumn++;
                             }
                             if (!isShip) {
@@ -238,9 +229,16 @@ public class Map {
     public void printShips(List<Ship> myShips) {
 
         int cntr;
+        String shipName = "";
 
         System.out.println();
         for (int i = 2; i <= 5; i++) {
+            switch (i) {
+                case 2 -> shipName = "Vanguard ";
+                case 3 -> shipName = "Triumph ";
+                case 4 -> shipName = "Hercules ";
+                case 5 -> shipName = "Dreadnought";
+            }
             cntr = 0;
             for (Ship myShip : myShips) {
                 if (myShip.getHealth() == 0) {
@@ -250,7 +248,7 @@ public class Map {
                     cntr++;
                 }
             }
-            System.out.println("Ships of size " + i + " = " + cntr);
+            System.out.printf("(%d)%s     \t   %d %s%n", i,  shipName, cntr, "ships");
         }
     }
 }

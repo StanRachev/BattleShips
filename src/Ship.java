@@ -14,8 +14,6 @@ public class Ship {
     private char cellVisualDreadnought = 'D';
     private char cellVisualDestroyed = 'X';
 
-
-
     public Ship(boolean isAi, boolean isHorizontal, int size, int row, int column) {
         this.isAi = isAi;
         this.isHorizontal = isHorizontal;

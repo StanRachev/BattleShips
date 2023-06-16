@@ -38,6 +38,13 @@ public class GameLauncher {
             printGameScreen(mapPlayer, mapAi, shipList, shipListAi, userName);
             System.out.println("\n" + userName + ": " + conditionPlayer + " [" + lastTurn(playerGuess[0],playerGuess[1]) + "]");
 
+            if (allDestroyed(shipList) || allDestroyed(shipListAi)) {
+                isAlive = false;
+                isGameOver = true;
+                if (allDestroyed(shipListAi)) {
+                    isWinner = true;
+                }
+            }
             if (conditionPlayer == Map.cellState_t.missed) {
                 boolean isPlayingAi = true;
                 while (isPlayingAi) {
@@ -57,15 +64,6 @@ public class GameLauncher {
                     } else {
                         isPlayingAi = false;
                     }
-                }
-            } else {
-                continue;
-            }
-            if (allDestroyed(shipList) || allDestroyed(shipListAi)) {
-                isAlive = false;
-                isGameOver = true;
-                if (allDestroyed(shipListAi)) {
-                    isWinner = true;
                 }
             }
         }

@@ -14,7 +14,7 @@ public class UI {
 
         System.out.println("-> to play PVP, press 1");
         System.out.println("-> To play against AI, press 2");
-        System.out.print("\n== Currently available only AI ==\n\n");
+        System.out.print("\n== Currently PVP is unavailable ==\n\n");
 
         int userInput;
         boolean isNumber = false;

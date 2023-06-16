@@ -1,4 +1,3 @@
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Player {
@@ -15,34 +14,34 @@ public class Player {
     public int[] makeGuess() {
 
         Scanner scanLetter = new Scanner(System.in);
-        char userInputLetter = 'm';
+        String userInputPosition = "";
+        char userInputCharLetter = 'z';
+        char userInputCharNumber = 'y';
         int userInputRow = 0;
         int userInputColumn = 0;
 
         boolean isLetter = false;
         while (!isLetter) {
-            System.out.print("\nPlease enter a letter from A to J: ");
-            userInputLetter = scanLetter.next().charAt(0);
-            if ((userInputLetter >= 'a' && userInputLetter <= 'j') || (userInputLetter >= 'A' && userInputLetter <= 'J')) {
-                isLetter = true;
-            }
-        }
-        userInputRow = Character.toUpperCase(userInputLetter) - 65; // Converting the userInput letter to number from 0 to 9;
 
-        boolean isNumber = false;
-        while (!isNumber) {
-            System.out.print("Please enter a number: ");
-            Scanner scanNumber = new Scanner(System.in);
-            try {
-                userInputColumn = scanNumber.nextInt();
-            } catch(InputMismatchException ar) {
-                continue;
-            }
-            if ((userInputColumn >= 1 && userInputColumn <= 10)) {
-                isNumber = true;
+            System.out.print("\nPlease enter position: ");
+            userInputPosition = scanLetter.next();
+
+            userInputCharLetter = userInputPosition.charAt(0); // firs char
+            if ((userInputCharLetter >= 'a' && userInputCharLetter <= 'j') || (userInputCharLetter >= 'A' && userInputCharLetter <= 'J')) {
+                userInputRow = Character.toUpperCase(userInputCharLetter) - 65; // Converting the letter to number from 0 to 9;
+                if (userInputPosition.length() == 3 && (userInputPosition.charAt(1) - 48 == 1) && (userInputPosition.charAt(2) - 48 == 0)) { // if num is 10
+                    userInputColumn = 9;
+                    isLetter = true;
+                } else if (userInputPosition.length() == 2) {
+                    userInputCharNumber = userInputPosition.charAt(1); // second char
+                    userInputColumn = userInputCharNumber - 49; // Converting the numChar number from 0 to 9;
+                    if (userInputColumn < 0 || userInputColumn > 10) {
+                        continue;
+                    }
+                    isLetter = true;
+                }
             }
         }
-        userInputColumn -= 1;
 
         int[] userInput = new int[2];
         userInput[0] = userInputRow;

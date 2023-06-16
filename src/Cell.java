@@ -24,16 +24,16 @@ public class Cell {
                 return this.battleship.getCellVisualDestroyed();
             }
             if (!this.battleship.isAi()) {
-                if (battleship.getHealth() == 2) {
+                if (battleship.getSize() == 2) {
                     return this.battleship.getCellVisualVanguard();
                 }
-                if (battleship.getHealth() == 3) {
+                if (battleship.getSize() == 3) {
                     return this.battleship.getCellVisualTriumpf();
                 }
-                if (battleship.getHealth() == 4) {
+                if (battleship.getSize() == 4) {
                     return this.battleship.getCellVisualHercules();
                 }
-                if (battleship.getHealth() == 5) {
+                if (battleship.getSize() == 5) {
                     return this.battleship.getCellVisualDreadnought();
                 }
             }

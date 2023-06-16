@@ -3,6 +3,15 @@ import java.util.Scanner;
 
 public class Player {
 
+
+    public String getUserName() {
+
+        Scanner scan = new Scanner(System.in);
+        System.out.print("\nPlease enter your name: ");
+
+        return scan.nextLine();
+    }
+
     public int[] makeGuess() {
 
         Scanner scanLetter = new Scanner(System.in);
@@ -40,13 +49,5 @@ public class Player {
         userInput[1] = userInputColumn;
 
         return userInput;
-    }
-
-    public String playerName() {
-
-        Scanner scan = new Scanner(System.in);
-        System.out.print("Please enter player name: ");
-
-        return scan.next();
     }
 }

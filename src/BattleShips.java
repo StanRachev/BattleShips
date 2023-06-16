@@ -6,13 +6,15 @@ public class BattleShips {
 
     public static void main(String[] args) throws InterruptedException {
 
+        int shipPlacement = ui();
+
         while (isNewGame) {
 
             GameLauncher myGame = new GameLauncher();
 
             boolean isGameOver = false;
             while (!isGameOver) {
-                myGame.launchGame();
+                myGame.launchGame(shipPlacement);
                 isGameOver = myGame.isGameOver();
             }
             if (myGame.isWinner()) {
@@ -24,6 +26,14 @@ public class BattleShips {
         }
     }
 
+    public static int ui() throws InterruptedException {
+
+        UI ui = new UI();
+        ui.intro();
+        ui.gameMode();
+
+        return ui.placeYourShips();
+    }
     public static void anotherGame() {
 
         System.out.println("\nDo you want another game?");
@@ -38,11 +48,9 @@ public class BattleShips {
                 isRightLetter = true;
             }
         }
-
         if (Character.toUpperCase(userInput) == 'N') {
             isNewGame = false;
         }
-        System.out.print("\033[H\033[2J"); /* Screen is wiped */
-        System.out.flush();
+        GameLauncher.wipeScreen();
     }
 }

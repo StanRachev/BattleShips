@@ -1,15 +1,15 @@
+import java.io.IOException;
 import java.util.Scanner;
 
 public class BattleShips {
 
     private static boolean isNewGame = true;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         int shipPlacement = ui();
 
         while (isNewGame) {
-
             GameLauncher myGame = new GameLauncher();
 
             boolean isGameOver = false;
@@ -17,6 +17,7 @@ public class BattleShips {
                 myGame.launchGame(shipPlacement);
                 isGameOver = myGame.isGameOver();
             }
+
             if (myGame.isWinner()) {
                 System.out.println("\nYou win!");
             } else {
@@ -34,7 +35,7 @@ public class BattleShips {
 
         return ui.placeYourShips();
     }
-    public static void anotherGame() {
+    public static void anotherGame() throws IOException, InterruptedException {
 
         System.out.println("\nDo you want another game?");
         System.out.print("Y/N: ");

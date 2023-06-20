@@ -26,7 +26,7 @@ public class Player {
             System.out.print("\nPlease enter position: ");
             userInputPosition = scanLetter.next();
 
-            userInputCharLetter = userInputPosition.charAt(0); // firs char
+            userInputCharLetter = userInputPosition.charAt(0); // first char
             if ((userInputCharLetter >= 'a' && userInputCharLetter <= 'j') || (userInputCharLetter >= 'A' && userInputCharLetter <= 'J')) {
                 userInputRow = Character.toUpperCase(userInputCharLetter) - 65; // Converting the letter to number from 0 to 9;
                 if (userInputPosition.length() == 3 && (userInputPosition.charAt(1) - 48 == 1) && (userInputPosition.charAt(2) - 48 == 0)) { // if num is 10
@@ -34,7 +34,7 @@ public class Player {
                     isLetter = true;
                 } else if (userInputPosition.length() == 2) {
                     userInputCharNumber = userInputPosition.charAt(1); // second char
-                    userInputColumn = userInputCharNumber - 49; // Converting the numChar number from 0 to 9;
+                    userInputColumn = userInputCharNumber - 49; // Converting the char to number from 0 to 9;
                     if (userInputColumn < 0 || userInputColumn > 10) {
                         continue;
                     }

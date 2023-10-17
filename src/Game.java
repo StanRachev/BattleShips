@@ -1,7 +1,7 @@
 import java.io.IOException;
 import java.util.List;
 
-public class GameLauncher {
+public class Game {
 
     private boolean isGameOver = false;
     private boolean isWinner = false;

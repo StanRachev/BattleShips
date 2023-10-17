@@ -10,7 +10,7 @@ public class BattleShips {
         int shipPlacement = ui();
 
         while (isNewGame) {
-            GameLauncher myGame = new GameLauncher();
+            Game myGame = new Game();
 
             boolean isGameOver = false;
             while (!isGameOver) {
@@ -52,6 +52,6 @@ public class BattleShips {
         if (Character.toUpperCase(userInput) == 'N') {
             isNewGame = false;
         }
-        GameLauncher.wipeScreen();
+        Game.wipeScreen();
     }
 }

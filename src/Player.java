@@ -14,9 +14,9 @@ public class Player {
     public int[] makeGuess() {
 
         Scanner scanLetter = new Scanner(System.in);
-        String userInputPosition = "";
-        char userInputCharLetter = 'z';
-        char userInputCharNumber = 'y';
+        String userInputPosition;
+        char userInputCharLetter;
+        char userInputCharNumber;
         int userInputRow = 0;
         int userInputColumn = 0;
 

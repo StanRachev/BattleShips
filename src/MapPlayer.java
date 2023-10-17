@@ -1,5 +1,8 @@
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 
 public class MapPlayer {
     enum cellState_t {
@@ -7,7 +10,7 @@ public class MapPlayer {
         Ship_is_destroyed,
         missed,
         Already_hit
-    };
+    }
 
     final int MAP_SIZE = 10;
 
@@ -59,8 +62,8 @@ public class MapPlayer {
         Scanner scan = new Scanner(System.in);
         Random random = new Random();
 
-        int row = 0;
-        int column = 0;
+        int row;
+        int column;
         int size = 2;
 
         boolean isShip = false;
@@ -73,9 +76,8 @@ public class MapPlayer {
             }
 
             if (shipPlacement == 1) {
-
                 Player player = new Player();
-                GameLauncher.wipeScreen();
+                Game.wipeScreen();
                 populateMap(newShip);
                 printMap();
                 printShips(newShip);
@@ -95,7 +97,6 @@ public class MapPlayer {
                 column = playerChoice[1];
 
             } else {
-
                 int trueFalse = random.nextInt(11);
                 if (trueFalse % 2 == 0) {
                     isHorizontal = true;
@@ -104,23 +105,12 @@ public class MapPlayer {
                 column = random.nextInt(10);
             }
 
-            if (isHorizontal) {
-                if (column + (size - 1) > MAP_SIZE - 1) {
-                    if (shipPlacement == 1) {
-                        continue;
-                    } else {
-                        column -= ((column + (size - 1)) - (MAP_SIZE - 1));
-                    }
-                }
-            } else { // Not horizontal
-                if (row + (size - 1) > MAP_SIZE - 1) {
-                    if (shipPlacement == 1) {
-                        continue;
-                    } else {
-                        row -= ((row + (size - 1)) - (MAP_SIZE - 1));
-                    }
-                }
+            if (isHorizontal && (column + (size - 1) > MAP_SIZE - 1)) {
+                column = shipLocationOnMap(column, size, shipPlacement);
+            } else if (!isHorizontal && (row + (size - 1) > MAP_SIZE - 1)) {
+                row = shipLocationOnMap(row, size, shipPlacement);
             }
+
             isShip = true;
             for (Ship ships : newShip) {
                 int shipRow = ships.getRow();
@@ -198,12 +188,7 @@ public class MapPlayer {
                 }
             }
             if (isShip) {
-                if (!isAI) {
-                    newShip.add(new Ship(false, isHorizontal, size, row, column));
-                } else {
-                    newShip.add(new Ship(true, isHorizontal, size, row, column));
-                }
-
+                newShip.add(new Ship(isAI, isHorizontal, size, row, column));
             }
             if (newShip.size() == 10) {
                 isNumber = true;
@@ -211,6 +196,15 @@ public class MapPlayer {
         }
 
         return newShip; // return list of ships
+    }
+
+    private int shipLocationOnMap(int rowOrColumn, int size, int shipPlacement) {
+        if (rowOrColumn + (size - 1) > MAP_SIZE - 1) {
+            if (shipPlacement != 1) {
+                rowOrColumn -= ((rowOrColumn + (size - 1)) - (MAP_SIZE - 1));
+            }
+        }
+        return rowOrColumn;
     }
 
     public void populateMap(List<Ship> ships) {

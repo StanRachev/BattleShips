@@ -1,10 +1,8 @@
 public class Cell {
 
-    private char cellVisual = '=';
-    private char cellVisualHitWater = '*';
     private Ship battleship;
-    private int row;
-    private int column;
+    private final int row;
+    private final int column;
     private boolean isHit = false;
 
     public Cell (Ship batleShip, int row, int column) {
@@ -38,28 +36,15 @@ public class Cell {
                 }
             }
         }
+        char cellVisual = '=';
         if (isHit) {
-            if (this.cellVisual == '=') {
-                return this.cellVisualHitWater;
-            }
+            return '▄';
         }
         return cellVisual;
     }
 
-    public void setCellVisual(char cellVisual) {
-        this.cellVisual = cellVisual;
-    }
-
     public Ship getBattleship() {
         return battleship;
-    }
-
-    public int getRow() {
-        return row;
-    }
-
-    public int getColumn() {
-        return column;
     }
 
     public void isHit() {

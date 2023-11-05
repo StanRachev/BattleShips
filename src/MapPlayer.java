@@ -1,8 +1,6 @@
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class MapPlayer {
     enum cellState_t {
@@ -12,45 +10,42 @@ public class MapPlayer {
         Already_hit
     }
 
-    final int MAP_SIZE = 10;
+    final static int MAP_SIZE = 10;
 
-    private final Cell[][] mapCells = new Cell[MAP_SIZE][MAP_SIZE];
+    private static final Cell[][] mapCells = new Cell[MAP_SIZE][MAP_SIZE];
 
     public void createMap() {
 
-        int i, j;
-
-        for (i = 0; i < MAP_SIZE; i++) {
-            for (j = 0; j < MAP_SIZE; j++) {
-                mapCells[i][j] = new Cell(null, i, j);
+        int row, col;
+        for (row = 0; row < MAP_SIZE; row++) {
+            for (col = 0; col < MAP_SIZE; col++) {
+                mapCells[row][col] = new Cell(null, row, col);
             }
         }
     }
 
     public void printMap() {
 
-        int column = 1;
-        char row = 'A';
-        int i, j;
+        System.out.printf("%n  ");
 
-        System.out.println();
-        System.out.print("  ");
-        for (i = 0; i < MAP_SIZE; i++) {
-            System.out.print(column++ + "  "); // print numbers
-        }
+        // print column numbers from 1 to 10
+        Stream.iterate(1, column -> column + 1)
+              .limit(MAP_SIZE)
+              .forEach(column -> System.out.print(column + "  "));
         System.out.print("\t'=' - fog");
-        System.out.println();
-        for (i = 0; i < MAP_SIZE; i++) {
-            if (i > 0) {
-                System.out.println(); // new line for every new row
+
+        // print row letters from A to J
+        char rowLetter = 'A';
+        int row, col;
+        for (row = 0; row < MAP_SIZE; row++) {
+            System.out.printf("%n" + rowLetter++ + " ");
+            // print cell visual
+            for (col = 0; col < MAP_SIZE; col++) {
+                System.out.print(mapCells[row][col].getCellVisual() + "  ");
             }
-            System.out.print(row++ + " "); // print from A to J
-            for (j = 0; j < mapCells.length; j++) {
-                System.out.print(mapCells[i][j].getCellVisual() + "  "); // print fog '=' for every cell
-            }
-            switch (i) {
-                case 0 -> System.out.print("\t'*' - miss");
-                case 1 -> System.out.print("\t'X' - hit");
+            switch (row) {
+                case 0 -> System.out.print("\t'▄' - miss");
+                case 1 -> System.out.print("\t'@' - hit");
             }
         }
         System.out.println();
@@ -58,153 +53,121 @@ public class MapPlayer {
 
     public List<Ship> createShips(int shipPlacement, boolean isAI) throws IOException, InterruptedException {
 
-        List<Ship> newShip = new ArrayList<>();
-        Scanner scan = new Scanner(System.in);
-        Random random = new Random();
+        List<Ship> shipsList = new ArrayList<>();
+        Player player = new Player();
+
+        int[] shipPlaced;
 
         int row;
         int column;
-        int size = 2;
+        int sizeOfShip = 2;
 
         boolean isShip = false;
-        boolean isHorizontal = false;
-        boolean isNumber = false;
-        while (!isNumber) {
+        boolean isHorizontal;
+        boolean isFullList = false;
 
-            if ((newShip.size() == 5 || newShip.size() == 7 || newShip.size() == 9) && isShip) {
-                size++;
+        while (!isFullList) {
+
+            if ((shipsList.size() == 5 || shipsList.size() == 7 || shipsList.size() == 9) && isShip) {
+                sizeOfShip++;
             }
-
-            if (shipPlacement == 1) {
-                Player player = new Player();
-                Game.wipeScreen();
-                populateMap(newShip);
-                printMap();
-                printShips(newShip);
-
-                switch (size) {
-                    case 2 -> System.out.println("\nPlace 5x Vanguard(2 cells)");
-                    case 3 -> System.out.println("\nPlace 2x Triumph(3 cells)");
-                    case 4 -> System.out.println("\nPlace 2x Hercules(4 cells)");
-                    case 5 -> System.out.println("\nPlace 1x Dreadnought(5 cells)");
-                }
-
-                int[] playerChoice = player.makeGuess();
-                System.out.print("For horizontal press 1, for vertical press 2: ");
-                int isHorizontalUser = scan.nextInt();
-                isHorizontal = isHorizontalUser == 1;
-                row = playerChoice[0];
-                column = playerChoice[1];
-
-            } else {
-                int trueFalse = random.nextInt(11);
-                if (trueFalse % 2 == 0) {
-                    isHorizontal = true;
-                }
-                row = random.nextInt(10);
-                column = random.nextInt(10);
+            if (shipPlacement == 1) { // Player creates ships
+                printUpdatedMap(shipsList);
+                listOfShipsToPlace(sizeOfShip);
+                shipPlaced = shipLocation(player);
+            } else { // Randomly generated ships
+                shipPlaced = randomShipLocation();
+                populateMap(shipsList);
             }
+            isHorizontal = shipPlaced[0] == 1;
+            row = shipPlaced[1];
+            column = shipPlaced[2];
+            int[] shipCorrectedLocation = checkShipOverstepMap(isHorizontal, row, column, sizeOfShip);
+            row = shipCorrectedLocation[0];
+            column = shipCorrectedLocation[1];
+            isShip = checkOverlappingShips(isHorizontal, row, column, sizeOfShip);
 
-            if (isHorizontal && (column + (size - 1) > MAP_SIZE - 1)) {
-                column = shipLocationOnMap(column, size, shipPlacement);
-            } else if (!isHorizontal && (row + (size - 1) > MAP_SIZE - 1)) {
-                row = shipLocationOnMap(row, size, shipPlacement);
+            if (isShip) { // Ship is created successfully and is in the list
+                shipsList.add(new Ship(isAI, isHorizontal, sizeOfShip, row, column));
             }
-
-            isShip = true;
-            for (Ship ships : newShip) {
-                int shipRow = ships.getRow();
-                int shipColumn = ships.getColumn();
-                int shipSize = ships.getSize();
-
-                if (isHorizontal && ships.isHorizontal()) {
-                    if (row == shipRow) {
-                        for (int j = 0; j < size; j++) {
-                            if (column == shipColumn) {
-                                isShip = false;
-                                break;
-                            }
-                            column++;
-                        }
-                        if (!isShip) {
-                            break;
-                        }
-                        column -= size;
-                    }
-                } else if (!isHorizontal && ships.isHorizontal()) {
-                    for (int j = 0; j < size; j++) {
-                        if (row == shipRow) {
-                            for (int k = 0; k < shipSize; k++) {
-                                if (column == shipColumn) {
-                                    isShip = false;
-                                    break;
-                                }
-                                shipColumn++;
-                            }
-                            if (!isShip) {
-                                break;
-                            }
-                        }
-                        row++;
-                    }
-                    if (!isShip) {
-                        break;
-                    }
-                    row -= size;
-                } else if (isHorizontal && !ships.isHorizontal()) {
-                    for (int j = 0; j < shipSize; j++) {
-                        if (row == shipRow) {
-                            for (int k = 0; k < size; k++) {
-                                if (column == shipColumn) {
-                                    isShip = false;
-                                    break;
-                                }
-                                column++;
-                            }
-                            if (!isShip) {
-                                break;
-                            }
-                            column -= size;
-                        }
-                        shipRow++;
-                    }
-                    if (!isShip) {
-                        break;
-                    }
-                } else if (!isHorizontal && !ships.isHorizontal()) {
-                    if (column == ships.getColumn()) {
-                        for (int j = 0; j < size; j++) {
-                            if (row == shipColumn) {
-                                isShip = false;
-                                break;
-                            }
-                            row++;
-                        }
-                        if (!isShip) {
-                            break;
-                        }
-                        row -= size;
-                    }
-                }
-            }
-            if (isShip) {
-                newShip.add(new Ship(isAI, isHorizontal, size, row, column));
-            }
-            if (newShip.size() == 10) {
-                isNumber = true;
+            if (shipsList.size() == 10) { // All 10 ships are in the list
+                isFullList = true;
             }
         }
-
-        return newShip; // return list of ships
+        return shipsList; // return list of ships
     }
 
-    private int shipLocationOnMap(int rowOrColumn, int size, int shipPlacement) {
-        if (rowOrColumn + (size - 1) > MAP_SIZE - 1) {
-            if (shipPlacement != 1) {
-                rowOrColumn -= ((rowOrColumn + (size - 1)) - (MAP_SIZE - 1));
+    private void printUpdatedMap(List<Ship> newShip) throws IOException, InterruptedException {
+
+        Game.wipeScreen();
+        populateMap(newShip);
+        printMap();
+        printShips(newShip);
+    }
+
+    private static void listOfShipsToPlace(int size) {
+
+        switch (size) {
+            case 2 -> System.out.println("\nPlace 5x Vanguard(2 cells)");
+            case 3 -> System.out.println("\nPlace 2x Triumph(3 cells)");
+            case 4 -> System.out.println("\nPlace 2x Hercules(4 cells)");
+            case 5 -> System.out.println("\nPlace 1x Dreadnought(5 cells)");
+        }
+    }
+    // Player assigns ship position
+    private static int[] shipLocation(Player player) {
+
+        Scanner scan = new Scanner(System.in);
+        int[] shipPositionRowCol = player.cellPosition();
+        System.out.print("For horizontal press 1, for vertical press 2: ");
+        int isHorizontalUser = scan.nextInt();
+        return new int[]{isHorizontalUser, shipPositionRowCol[0], shipPositionRowCol[1]};
+    }
+    // Autogenerated ship location
+    private static int[] randomShipLocation() {
+
+        final Random random = new Random();
+        int isHorizontal = 0;
+        int trueFalse = random.nextInt(11);
+        if (trueFalse % 2 == 0) {
+            isHorizontal = 1;
+        }
+        return new int[]{isHorizontal, random.nextInt(10), random.nextInt(10)};
+    }
+
+    private static int shipLocationOnMap(int rowOrColumn, int size) {
+
+        rowOrColumn -= ((rowOrColumn + (size - 1)) - (MAP_SIZE - 1));
+        return rowOrColumn;
+    }
+    // If ship overstep map boundaries is positioned inside pushed n positions back
+    private static int[] checkShipOverstepMap(boolean isHorizontal, int row, int column, int size) {
+
+        if (isHorizontal && (column + (size - 1) > MAP_SIZE - 1)) {
+            column = shipLocationOnMap(column, size);
+        } else if (!isHorizontal && (row + (size - 1) > MAP_SIZE - 1)) {
+            row = shipLocationOnMap(row, size);
+        }
+        return new int[]{row, column};
+    }
+
+    // Checking if current ship overlaps with another ship from the list
+    private static boolean checkOverlappingShips(boolean isHorizontal, int row, int column, int size) {
+
+        if (isHorizontal) {
+            for (int i = 0; i < size; i++) {
+                if (mapCells[row][column++].getBattleship() != null) {
+                    return false;
+                }
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                if (mapCells[row++][column].getBattleship() != null) {
+                    return false;
+                }
             }
         }
-        return rowOrColumn;
+        return true;
     }
 
     public void populateMap(List<Ship> ships) {
@@ -279,7 +242,7 @@ public class MapPlayer {
 
 class MapAI extends MapPlayer {
 
-    private final Cell[][] mapCellsAI = new Cell[MAP_SIZE][MAP_SIZE];
+    private static final Cell[][] mapCellsAI = new Cell[MAP_SIZE][MAP_SIZE];
 
     @Override
     public void createMap() {
@@ -296,23 +259,22 @@ class MapAI extends MapPlayer {
     @Override
     public void printMap() {
 
-        int column = 1;
-        char row = 'A';
-        int i, j;
+        int row, col;
 
-        System.out.println();
-        System.out.print("  ");
-        for (i = 0; i < MAP_SIZE; i++) {
-            System.out.print(column++ + "  "); // print numbers
-        }
-        System.out.println();
-        for (i = 0; i < MAP_SIZE; i++) {
-            if (i > 0) {
-                System.out.println(); // new line for every new row
-            }
-            System.out.print(row++ + " "); // print from A to J
-            for (j = 0; j < mapCellsAI.length; j++) {
-                System.out.print(mapCellsAI[i][j].getCellVisual() + "  "); // print fog '=' for every cell
+        System.out.printf("%n  ");
+
+        // print column numbers from 1 to 10
+        Stream.iterate(1, column -> column + 1)
+              .limit(MAP_SIZE)
+              .forEach(column -> System.out.print(column + "  "));
+
+        // print row letters from A to J
+        char rowLetters = 'A';
+        for (row = 0; row < MAP_SIZE; row++) {
+            System.out.printf("%n" + rowLetters++ + " ");
+            // print cell visual
+            for (col = 0; col < mapCellsAI.length; col++) {
+                System.out.print(mapCellsAI[row][col].getCellVisual() + "  "); // print fog '=' for every cell
             }
         }
         System.out.println();

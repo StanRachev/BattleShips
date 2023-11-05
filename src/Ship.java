@@ -1,18 +1,12 @@
 public class Ship {
 
-    private boolean isHorizontal;
+    private final boolean isHorizontal;
     private boolean isDead = false;
-    private boolean isAi;
+    private final boolean isAi;
     private int size;
     private int health;
-    private int row;
-    private int column;
-    private int cntr = 0;
-    private char cellVisualVanguard = 'V';
-    private char cellVisualTriumpf = 'T';
-    private char cellVisualHercules = 'H';
-    private char cellVisualDreadnought = 'D';
-    private char cellVisualDestroyed = 'X';
+    private final int row;
+    private final int column;
 
     public Ship(boolean isAi, boolean isHorizontal, int size, int row, int column) {
         this.isAi = isAi;
@@ -50,23 +44,23 @@ public class Ship {
     }
 
     public char getCellVisualVanguard() {
-        return cellVisualVanguard;
+        return 'V';
     }
 
     public char getCellVisualDestroyed() {
-        return cellVisualDestroyed;
+        return '@';
     }
 
     public char getCellVisualTriumpf() {
-        return cellVisualTriumpf;
+        return 'T';
     }
 
     public char getCellVisualHercules() {
-        return cellVisualHercules;
+        return 'H';
     }
 
     public char getCellVisualDreadnought() {
-        return cellVisualDreadnought;
+        return 'D';
     }
 
     public int getHealth() {

@@ -18,7 +18,7 @@ public class BattleShips {
                 isGameOver = myGame.isGameOver();
             }
 
-            if (myGame.isWinner()) {
+            if (myGame.playerWins()) {
                 System.out.println("\nYou win!");
             } else {
                 System.out.println("\nGame over");

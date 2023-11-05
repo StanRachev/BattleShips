@@ -4,21 +4,21 @@ import java.util.List;
 public class Game {
 
     private boolean isGameOver = false;
-    private boolean isWinner = false;
+    private boolean playerWins = false;
 
     public void launchGame(int shipPlacement) throws InterruptedException, IOException {
 
         // Player
         Player player = new Player();
-        String userName = player.getUserName();
         MapPlayer mapPlayer = new MapPlayer();
+        String userName = player.getUserName();
         mapPlayer.createMap();
         List<Ship> shipList = mapPlayer.createShips(shipPlacement, false);
         mapPlayer.populateMap(shipList);
 
         // AI
         AI ai = new AI();
-        MapPlayer mapAi = new MapAI();
+        MapAI mapAi = new MapAI();
         mapAi.createMap();
         shipPlacement = 2; // automatic placement
         List<Ship> shipListAi = mapAi.createShips(shipPlacement, true);
@@ -35,7 +35,7 @@ public class Game {
         boolean isAlive = true;
         while (isAlive) {
 
-            playerGuess = player.makeGuess();
+            playerGuess = player.cellPosition();
             conditionPlayer = mapAi.hit(playerGuess[0], playerGuess[1]); // returns condition (Hit, Kill) and changes visuals on AI map
             printGameScreen(mapPlayer, mapAi, shipList, shipListAi, userName);
             System.out.println("\n" + userName + ": " + conditionPlayer + " [" + lastTurn(playerGuess[0],playerGuess[1]) + "]");
@@ -44,7 +44,7 @@ public class Game {
                 isAlive = false;
                 isGameOver = true;
                 if (allDestroyed(shipListAi)) {
-                    isWinner = true;
+                    playerWins = true;
                 }
             }
             if (conditionPlayer == MapPlayer.cellState_t.missed) {
@@ -111,15 +111,13 @@ public class Game {
         return isGameOver;
     }
 
-    public boolean isWinner() {
+    public boolean playerWins() {
 
-        return isWinner;
+        return playerWins;
     }
 
     public static void wipeScreen() throws IOException, InterruptedException {
 
-//        System.out.print("\033[H\033[2J"); /* Screen is wiped */
-//        System.out.flush();
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
     }
 }

@@ -7,46 +7,52 @@ public class Player {
 
         Scanner scan = new Scanner(System.in);
         System.out.print("\nPlease enter your name: ");
-
         return scan.nextLine();
     }
 
-    public int[] makeGuess() {
+    public int[] cellPosition() {
 
-        Scanner scanLetter = new Scanner(System.in);
+        Scanner scan = new Scanner(System.in);
+
         String userInputPosition;
-        char userInputCharLetter;
-        char userInputCharNumber;
+        int[] inputPositionToNums = new int[3];
+        boolean isLegitPosition = false;
+
+        while (!isLegitPosition) {
+            userInputPosition = pleaseEnterPosition(scan);
+            inputPositionToNums = cellPositionConversion(userInputPosition);
+            isLegitPosition = inputPositionToNums[0] == 1;
+        }
+        return new int[]{inputPositionToNums[1], inputPositionToNums[2]};
+    }
+
+    private static String pleaseEnterPosition(Scanner scan) {
+
+        System.out.print("\nPlease enter position: ");
+        return scan.next();
+    }
+
+    private static int[] cellPositionConversion(String userInputPosition) {
+
+        int isCell = 0;
         int userInputRow = 0;
         int userInputColumn = 0;
 
-        boolean isLetter = false;
-        while (!isLetter) {
-
-            System.out.print("\nPlease enter position: ");
-            userInputPosition = scanLetter.next();
-
-            userInputCharLetter = userInputPosition.charAt(0); // first char
-            if ((userInputCharLetter >= 'a' && userInputCharLetter <= 'j') || (userInputCharLetter >= 'A' && userInputCharLetter <= 'J')) {
-                userInputRow = Character.toUpperCase(userInputCharLetter) - 65; // Converting the letter to number from 0 to 9;
-                if (userInputPosition.length() == 3 && (userInputPosition.charAt(1) - 48 == 1) && (userInputPosition.charAt(2) - 48 == 0)) { // if num is 10
-                    userInputColumn = 9;
-                    isLetter = true;
-                } else if (userInputPosition.length() == 2) {
-                    userInputCharNumber = userInputPosition.charAt(1); // second char
-                    userInputColumn = userInputCharNumber - 49; // Converting the char to number from 0 to 9;
-                    if (userInputColumn < 0 || userInputColumn > 10) {
-                        continue;
-                    }
-                    isLetter = true;
+        char userInputLetter = userInputPosition.charAt(0); // first char
+        if ((userInputLetter >= 'a' && userInputLetter <= 'j') || (userInputLetter >= 'A' && userInputLetter <= 'J')) {
+            userInputRow = Character.toUpperCase(userInputLetter) - 'A'; // Converting the letter to number from 0 to 9;
+            if (userInputPosition.length() == 3 && (userInputPosition.charAt(1) - '0' == 1) && (userInputPosition.charAt(2) - '0' == 0)) { // if num is 10
+                userInputColumn = 9;
+                isCell = 1;
+            } else if (userInputPosition.length() == 2) {
+                char userInputNum = userInputPosition.charAt(1); // second char
+                userInputColumn = userInputNum - '1'; // Converting the char to number from 0 to 9;
+                if (userInputColumn < 0 || userInputColumn > 10) {
+                    return new int[]{isCell, userInputRow, userInputColumn};
                 }
+                isCell = 1;
             }
         }
-
-        int[] userInput = new int[2];
-        userInput[0] = userInputRow;
-        userInput[1] = userInputColumn;
-
-        return userInput;
+        return new int[]{isCell, userInputRow, userInputColumn};
     }
 }

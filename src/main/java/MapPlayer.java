@@ -1,5 +1,8 @@
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class MapPlayer {
@@ -29,6 +32,8 @@ public class MapPlayer {
         System.out.printf("%n  ");
 
         // print column numbers from 1 to 10
+        /*System.out.println(IntStream.range(1, 10)
+                                    .sorted() + "  ");*/
         Stream.iterate(1, column -> column + 1)
               .limit(MAP_SIZE)
               .forEach(column -> System.out.print(column + "  "));

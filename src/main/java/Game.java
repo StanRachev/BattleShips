@@ -10,8 +10,8 @@ public class Game {
 
         // Player
         Player player = new Player();
-        MapPlayer mapPlayer = new MapPlayer();
         String userName = player.getUserName();
+        MapPlayer mapPlayer = new MapPlayer();
         mapPlayer.createMap();
         List<Ship> shipList = mapPlayer.createShips(shipPlacement, false);
         mapPlayer.populateMap(shipList);

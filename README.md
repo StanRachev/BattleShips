@@ -9,6 +9,8 @@ Welcome to the Battleships game! This is a console-based implementation of the c
 
 ## How to Play
 
+To play the game, run the BattleShips class.
+
 1. Choose your game mode:
    - Player vs AI
    - Player vs Player (coming soon)
@@ -20,10 +22,6 @@ Welcome to the Battleships game! This is a console-based implementation of the c
 3. Start the game and take turns guessing the positions of the opponent's ships.
 
 4. The game ends when all ships of one player are destroyed.
-
-## How to play
-
-To play the game, run the BattleShips class.
 
 ## Game Rules
 

@@ -1,4 +1,8 @@
-public class Ship {
+package board;
+
+import board.Cells.CellVisual;
+
+public class Ship implements CellVisual {
 
     private final boolean isHorizontal;
     private boolean isDead = false;
@@ -61,6 +65,17 @@ public class Ship {
 
     public char getCellVisualDreadnought() {
         return 'D';
+    }
+
+    @Override
+    public char getCellVisual() {
+        return switch (size) {
+            case 2 -> getCellVisualVanguard();
+            case 3 -> getCellVisualTriumpf();
+            case 4 -> getCellVisualHercules();
+            case 5 -> getCellVisualDreadnought();
+            default -> '-';
+        };
     }
 
     public int getHealth() {

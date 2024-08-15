@@ -1,3 +1,6 @@
+import game.GameManager;
+import UI.UI;
+
 import java.util.Scanner;
 
 public class BattleShips {
@@ -10,7 +13,7 @@ public class BattleShips {
         ui.intro();
         ui.chooseGameMode();
 
-        int shipPlacement = ui.placeYourShips();
+        boolean shipPlacement = ui.placeYourShips();
         GameManager myGame = new GameManager();
         while (isNewGame) {
 
@@ -46,6 +49,6 @@ public class BattleShips {
         if (Character.toUpperCase(userInput) == 'N') {
             isNewGame = false;
         }
-        GameManager.wipeScreen();
+//        GameManager.wipeScreen();
     }
 }
